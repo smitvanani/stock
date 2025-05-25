@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stock Exchange Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    table { margin: auto; border-collapse: collapse; width: 90%; max-width: 600px; }
+    th, td { border: 1px solid #ccc; padding: 10px; font-size: 18px; }
+    input[type='number'] { width: 80px; font-size: 16px; }
+    .note { margin-bottom: 10px; font-weight: bold; color: green; }
+  </style>
+</head>
+<body>
+  <h1>📊 Stock Prices</h1>
+  {% if admin %}
+  <div class="note">Admin Mode: You can edit prices</div>
+  {% endif %}
+  <table>
+    <thead>
+      <tr><th>Stock</th><th>Price</th></tr>
+    </thead>
+    <tbody id="stockTable">
+      {% for name, price in stocks.items() %}
+      <tr>
+        <td>{{ name }}</td>
+        <td>
+          {% if admin %}
+          <input type="number" value="{{ price }}" onchange="updatePrice('{{ name }}', this.value)">
+          {% else %}
+          <span id="price-{{ name }}">{{ price }}</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+    const isAdmin = {{ 'true' if admin else 'false' }};
+
+    function updatePrice(name, value) {
+      socket.emit('update_stock', { name, price: Number(value) });
+    }
+
+    socket.on('stock_update', function(data) {
+      for (let name in data) {
+        const el = document.getElementById("price-" + name);
+        if (el) el.textContent = data[name];
+      }
+    });
+  </script>
+</body>
+</html>
