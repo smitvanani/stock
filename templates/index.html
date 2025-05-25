@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stock Exchange</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    table { margin: 0 auto; width: 80%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 10px; }
+    input { width: 80px; text-align: center; }
+    .update-btn { margin-top: 20px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>🎲 Stock Exchange Board Game</h1>
+  <form method="POST" action="/update">
+    <table>
+      <tr><th>Stock</th><th>Price</th></tr>
+      {% for name, price in stocks.items() %}
+      <tr>
+        <td>{{ name }}</td>
+        <td><input type="number" name="{{ name }}" value="{{ price }}"></td>
+      </tr>
+      {% endfor %}
+    </table>
+    <button class="update-btn" type="submit">Update Prices</button>
+  </form>
+</body>
+</html>
